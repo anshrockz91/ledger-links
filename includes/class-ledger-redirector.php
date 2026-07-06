@@ -64,7 +64,7 @@ class Ledger_Redirector {
         try {
             Ledger_Tracker::instance()->record_click( $link );
         } catch ( Throwable $e ) {
-            error_log( '[Ledger Links] Click tracking failed for link ' . $link->id . ': ' . $e->getMessage() );
+            ledger_links_log( '[Ledger Links] Click tracking failed for link ' . $link->id . ': ' . $e->getMessage() );
         }
 
         $target = $link->target_url;
@@ -74,7 +74,7 @@ class Ledger_Redirector {
         }
 
         if ( 'broken' === $link->status ) {
-            error_log( '[Ledger Links] Warning: redirecting through a link flagged broken by the checker: ' . $slug );
+            ledger_links_log( '[Ledger Links] Warning: redirecting through a link flagged broken by the checker: ' . $slug );
         }
 
         nocache_headers();

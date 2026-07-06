@@ -49,7 +49,7 @@ class Ledger_Tracker {
         ) );
 
         if ( false === $ok ) {
-            error_log( '[Ledger Links] Failed to record click for link ' . $link->id . ': ' . $wpdb->last_error );
+            ledger_links_log( '[Ledger Links] Failed to record click for link ' . $link->id . ': ' . $wpdb->last_error );
         }
 
         return $ok;
@@ -64,8 +64,11 @@ class Ledger_Tracker {
         $table = $wpdb->prefix . 'ledger_clicks';
         $settings = get_option( 'ledger_links_settings', array() );
 
-        $where = array( $wpdb->prepare( 'link_id = %d', $link_id ) );
-        $where[] = $wpdb->prepare( 'clicked_at >= DATE_SUB(NOW(), INTERVAL %d DAY)', absint( $days ) );
+        $where = array( 'link_id = %d' );
+        $params = array( $link_id );
+
+        $where[] = 'clicked_at >= DATE_SUB(NOW(), INTERVAL %d DAY)';
+        $params[] = absint( $days );
 
         if ( ! empty( $settings['exclude_bots'] ) ) {
             $where[] = 'is_bot = 0';
@@ -74,18 +77,24 @@ class Ledger_Tracker {
             $where[] = 'is_self_click = 0';
         }
 
-        $sql = "SELECT COUNT(*) FROM {$table} WHERE " . implode( ' AND ', $where );
-        return (int) $wpdb->get_var( $sql );
+        // Table name interpolated (identifiers can't be prepare() placeholders); every value
+        // in the WHERE clause goes through the single prepare() call below.
+        $where_clause = implode( ' AND ', $where ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        return (int) $wpdb->get_var(
+            $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE {$where_clause}", $params ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        );
     }
 
     public function get_raw_click_count( $link_id, $days = 30 ) {
         global $wpdb;
         $table = $wpdb->prefix . 'ledger_clicks';
-        $sql = $wpdb->prepare(
-            "SELECT COUNT(*) FROM {$table} WHERE link_id = %d AND clicked_at >= DATE_SUB(NOW(), INTERVAL %d DAY)",
-            $link_id, absint( $days )
+        return (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM {$table} WHERE link_id = %d AND clicked_at >= DATE_SUB(NOW(), INTERVAL %d DAY)",
+                $link_id,
+                absint( $days )
+            )
         );
-        return (int) $wpdb->get_var( $sql );
     }
 
     public function get_breakdown( $link_id, $days = 30 ) {

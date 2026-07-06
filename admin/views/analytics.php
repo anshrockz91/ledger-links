@@ -25,11 +25,14 @@ $tracker = Ledger_Tracker::instance();
             <h2><?php echo esc_html( $link->title ?: $link->slug ); ?> <span class="description">/<?php echo esc_html( $link->slug ); ?></span></h2>
             <p><strong><?php echo esc_html( count( $breakdown ) ); ?></strong> clean clicks in the last 30 days.</p>
             <p>Device split — Desktop: <?php echo esc_html( $devices['desktop'] ); ?>, Mobile: <?php echo esc_html( $devices['mobile'] ); ?></p>
-            <p>Browsers — <?php
-                $parts = array();
-                foreach ( $browsers as $b => $c ) { $parts[] = esc_html( "$b: $c" ); }
-                echo $parts ? implode( ', ', $parts ) : 'no data yet';
-            ?></p>
+            <?php
+            $browser_parts = array();
+            foreach ( $browsers as $browser_name => $browser_count ) {
+                $browser_parts[] = "{$browser_name}: {$browser_count}";
+            }
+            $browser_summary = $browser_parts ? implode( ', ', $browser_parts ) : 'no data yet';
+            ?>
+            <p>Browsers — <?php echo esc_html( $browser_summary ); ?></p>
         </div>
     <?php endforeach; endif; ?>
 </div>

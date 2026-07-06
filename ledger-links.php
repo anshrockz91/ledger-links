@@ -38,6 +38,16 @@ register_deactivation_hook( __FILE__, function () {
 } );
 
 /**
+ * Log a plugin-internal error, but only when WP_DEBUG logging is on — avoids
+ * shipping debug-only calls that run unconditionally in production.
+ */
+function ledger_links_log( $message ) {
+    if ( defined( 'WP_DEBUG' ) && WP_DEBUG && defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+        error_log( $message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+    }
+}
+
+/**
  * Boot the plugin.
  */
 function ledger_links_init() {

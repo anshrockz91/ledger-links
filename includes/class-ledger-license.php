@@ -58,7 +58,7 @@ class Ledger_License {
         ) );
 
         if ( is_wp_error( $response ) ) {
-            error_log( '[Ledger Links] License activation request failed: ' . $response->get_error_message() );
+            ledger_links_log( '[Ledger Links] License activation request failed: ' . $response->get_error_message() );
             return array( 'success' => false, 'message' => 'Could not reach the license server. Try again shortly.' );
         }
 
@@ -94,7 +94,7 @@ class Ledger_License {
         ) );
 
         if ( is_wp_error( $response ) ) {
-            error_log( '[Ledger Links] License revalidation failed (network): ' . $response->get_error_message() );
+            ledger_links_log( '[Ledger Links] License revalidation failed (network): ' . $response->get_error_message() );
             return; // fail open for one cycle rather than punishing users for a transient network blip
         }
 
@@ -105,7 +105,7 @@ class Ledger_License {
         update_option( 'ledger_links_settings', $settings );
 
         if ( ! $valid ) {
-            error_log( '[Ledger Links] License no longer valid, Pro features disabled for ' . home_url() );
+            ledger_links_log( '[Ledger Links] License no longer valid, Pro features disabled for ' . home_url() );
         }
     }
 }

@@ -45,7 +45,7 @@ class Ledger_Link_Checker {
         }
 
         if ( ! empty( $broken_found ) ) {
-            error_log( '[Ledger Links] Broken link check found ' . count( $broken_found ) . ' broken link(s): ' . wp_json_encode( $broken_found ) );
+            ledger_links_log( '[Ledger Links] Broken link check found ' . count( $broken_found ) . ' broken link(s): ' . wp_json_encode( $broken_found ) );
             do_action( 'ledger_links_broken_links_found', $broken_found );
         }
 

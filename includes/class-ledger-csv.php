@@ -15,7 +15,9 @@ class Ledger_CSV {
         header( 'Content-Type: text/csv; charset=utf-8' );
         header( 'Content-Disposition: attachment; filename=ledger-links-export-' . gmdate( 'Y-m-d' ) . '.csv' );
 
-        $out = fopen( 'php://output', 'w' );
+        // WP_Filesystem has no equivalent for streaming directly to php://output,
+        // so a direct file handle is the only option for a CSV download response.
+        $out = fopen( 'php://output', 'w' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
         fputcsv( $out, array( 'slug', 'target_url', 'mobile_target_url', 'title', 'category', 'redirect_type', 'status' ) );
 
         foreach ( $links as $link ) {
@@ -30,7 +32,7 @@ class Ledger_CSV {
             ) );
         }
 
-        fclose( $out );
+        fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
         exit;
     }
 
@@ -41,18 +43,27 @@ class Ledger_CSV {
     public static function import_from_file( $file_path ) {
         $result = array( 'imported' => 0, 'skipped' => 0, 'errors' => array() );
 
-        $handle = fopen( $file_path, 'r' );
-        if ( false === $handle ) {
+        global $wp_filesystem;
+        if ( ! function_exists( 'WP_Filesystem' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+        }
+        WP_Filesystem();
+
+        $contents = $wp_filesystem->get_contents( $file_path );
+        if ( false === $contents ) {
             $result['errors'][] = 'Could not open the uploaded file.';
             return $result;
         }
 
-        $header = fgetcsv( $handle );
+        $lines = preg_split( '/\r\n|\r|\n/', trim( $contents ) );
         $expected = array( 'slug', 'target_url', 'mobile_target_url', 'title', 'category', 'redirect_type' );
 
-        $row_num = 1;
-        while ( false !== ( $row = fgetcsv( $handle ) ) ) {
-            $row_num++;
+        // First line is the header row, skip it.
+        for ( $row_num = 1; $row_num < count( $lines ); $row_num++ ) {
+            if ( '' === trim( $lines[ $row_num ] ) ) {
+                continue;
+            }
+            $row = str_getcsv( $lines[ $row_num ] );
             $data = array_combine( array_slice( $expected, 0, count( $row ) ), $row );
 
             if ( empty( $data['slug'] ) || empty( $data['target_url'] ) || ! filter_var( $data['target_url'], FILTER_VALIDATE_URL ) ) {
@@ -77,7 +88,6 @@ class Ledger_CSV {
             $result['imported']++;
         }
 
-        fclose( $handle );
         return $result;
     }
 }
