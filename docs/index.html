@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ledger Links — Affiliate link cloaking for WordPress</title>
+<meta name="description" content="Affiliate link cloaking with a free broken-link checker, honest click analytics, and CSV import/export. No upsell nags.">
+<style>
+  :root {
+    --ink: #182420; --ink-soft: #3d4a44; --paper: #eef1ec; --paper-raised: #ffffff;
+    --line: #ccd3cb; --accent: #1f6f63; --accent-soft: #dbe9e4;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #e8ece9; --ink-soft: #aab5ae; --paper: #121815; --paper-raised: #1a221e; --line: #2c3733; --accent: #5ecab5; --accent-soft: #1c3430; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+    line-height: 1.6;
+  }
+  .sans { font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 64px 24px 96px; }
+  h1 { font-size: 36px; line-height: 1.15; margin: 0 0 12px; text-wrap: balance; }
+  .tagline { font-size: 18px; color: var(--ink-soft); margin: 0 0 32px; max-width: 55ch; }
+  .badge {
+    display: inline-block; font-family: -apple-system, sans-serif; font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em; background: var(--accent-soft); color: var(--accent);
+    padding: 4px 10px; border-radius: 999px; margin-bottom: 16px;
+  }
+  h2 { font-size: 13px; font-family: -apple-system, sans-serif; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); border-bottom: 1px solid var(--line); padding-bottom: 8px; margin: 40px 0 20px; }
+  ul.features { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  ul.features li { font-size: 16px; padding-left: 20px; position: relative; }
+  ul.features li::before { content: "—"; position: absolute; left: 0; color: var(--accent); }
+  .cta-row { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .btn {
+    font-family: -apple-system, sans-serif; font-size: 14px; font-weight: 600; text-decoration: none;
+    padding: 10px 20px; border-radius: 8px; display: inline-block;
+  }
+  .btn-primary { background: var(--accent); color: var(--paper-raised); }
+  .btn-secondary { background: var(--paper-raised); color: var(--ink); border: 1px solid var(--line); }
+  footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); font-family: -apple-system, sans-serif; font-size: 13px; color: var(--ink-soft); }
+</style>
+</head>
+<body>
+<main>
+  <span class="badge">Free WordPress plugin</span>
+  <h1>Ledger Links</h1>
+  <p class="tagline">Affiliate link cloaking for WordPress — with a free broken-link checker, honest click analytics, and CSV import/export. No upsell nags.</p>
+
+  <h2>What it does</h2>
+  <p>Turn long, ugly affiliate URLs into clean branded links (<code>yoursite.com/go/best-laptop</code>) that redirect visitors to the real product page — while tracking clicks and catching dead links before they cost you commission.</p>
+
+  <h2>Free, forever</h2>
+  <ul class="features">
+    <li>Unlimited cloaked links with 301/302/307 redirect types</li>
+    <li>Automatic broken-link checker, twice a day, plus a manual check-now button</li>
+    <li>Click analytics with bot-filtering and self-click exclusion on by default — the honest count, not the inflated one</li>
+    <li>Device targeting: send mobile visitors to a different URL than desktop</li>
+    <li>CSV import and export, no row limits</li>
+    <li>Zero in-admin upsell popups, ever</li>
+  </ul>
+
+  <h2>Pro (optional)</h2>
+  <p>Geo-redirects, an autolinker for keyword-to-link automation, advanced analytics, and multi-site licensing for agencies.</p>
+
+  <div class="cta-row">
+    <a class="btn btn-primary sans" href="https://wordpress.org/plugins/ledger-links/">Get it on WordPress.org</a>
+    <a class="btn btn-secondary sans" href="https://github.com/anshrockz91/ledger-links">View source on GitHub</a>
+  </div>
+
+  <footer>Ledger Links is GPL-licensed WordPress plugin software.</footer>
+</main>
+</body>
+</html>
