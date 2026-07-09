@@ -7,13 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * CSV import/export — paywalled on ThirstyAffiliates despite no real
  * technical reason to gate it. Free here.
  */
-class Ledger_CSV {
+class Trellink_CSV {
 
     public static function export_all() {
-        $links = Ledger_Links_CPT::get_all( array( 'limit' => 100000 ) );
+        $links = Trellink_CPT::get_all( array( 'limit' => 100000 ) );
 
         header( 'Content-Type: text/csv; charset=utf-8' );
-        header( 'Content-Disposition: attachment; filename=ledger-links-export-' . gmdate( 'Y-m-d' ) . '.csv' );
+        header( 'Content-Disposition: attachment; filename=trellink-export-' . gmdate( 'Y-m-d' ) . '.csv' );
 
         // WP_Filesystem has no equivalent for streaming directly to php://output,
         // so a direct file handle is the only option for a CSV download response.
@@ -72,13 +72,13 @@ class Ledger_CSV {
                 continue;
             }
 
-            if ( Ledger_Links_CPT::get_by_slug( sanitize_title( $data['slug'] ) ) ) {
+            if ( Trellink_CPT::get_by_slug( sanitize_title( $data['slug'] ) ) ) {
                 $result['skipped']++;
                 $result['errors'][] = "Row {$row_num}: slug '{$data['slug']}' already exists, skipped.";
                 continue;
             }
 
-            $inserted = Ledger_Links_CPT::insert( $data );
+            $inserted = Trellink_CPT::insert( $data );
             if ( false === $inserted ) {
                 $result['skipped']++;
                 $result['errors'][] = "Row {$row_num}: database insert failed.";

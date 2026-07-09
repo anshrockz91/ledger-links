@@ -7,10 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Broken-link checker — paywalled on PrettyLinks and ThirstyAffiliates.
  * Free here on purpose: it's the strongest wedge found in research.
  */
-class Ledger_Link_Checker {
+class Trellink_Link_Checker {
 
     private static $instance = null;
-    const CRON_HOOK = 'ledger_links_check_all';
+    const CRON_HOOK = 'trellink_check_all';
 
     public static function instance() {
         if ( null === self::$instance ) {
@@ -31,13 +31,13 @@ class Ledger_Link_Checker {
     }
 
     public function check_all_links() {
-        $links = Ledger_Links_CPT::get_all( array( 'limit' => 500 ) );
+        $links = Trellink_CPT::get_all( array( 'limit' => 500 ) );
         $broken_found = array();
 
         foreach ( $links as $link ) {
             $result = $this->check_one( $link->target_url );
             $status = $result['ok'] ? 'active' : 'broken';
-            Ledger_Links_CPT::update_status( $link->id, $status, $result['reason'] );
+            Trellink_CPT::update_status( $link->id, $status, $result['reason'] );
 
             if ( ! $result['ok'] ) {
                 $broken_found[] = array( 'slug' => $link->slug, 'target' => $link->target_url, 'reason' => $result['reason'] );
@@ -45,8 +45,8 @@ class Ledger_Link_Checker {
         }
 
         if ( ! empty( $broken_found ) ) {
-            ledger_links_log( '[Ledger Links] Broken link check found ' . count( $broken_found ) . ' broken link(s): ' . wp_json_encode( $broken_found ) );
-            do_action( 'ledger_links_broken_links_found', $broken_found );
+            trellink_log( '[Trellink] Broken link check found ' . count( $broken_found ) . ' broken link(s): ' . wp_json_encode( $broken_found ) );
+            do_action( 'trellink_broken_links_found', $broken_found );
         }
 
         return $broken_found;
@@ -56,7 +56,7 @@ class Ledger_Link_Checker {
         $response = wp_remote_head( $url, array(
             'timeout'     => 8,
             'redirection' => 5,
-            'user-agent'  => 'Ledger-Links-Checker/1.0 (+https://ledgerlinks.com)',
+            'user-agent'  => 'Trellink-Checker/1.0',
         ) );
 
         if ( is_wp_error( $response ) ) {

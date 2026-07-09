@@ -3,10 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$links = Ledger_Links_CPT::get_all();
-$tracker = Ledger_Tracker::instance();
+$links = Trellink_CPT::get_all();
+$tracker = Trellink_Tracker::instance();
 ?>
-<div class="wrap ledger-wrap">
+<div class="wrap trellink-wrap">
     <h1>Analytics</h1>
     <p>Numbers below exclude known bots and your own admin clicks by default — see Settings to change that. This is the honest count, not the inflated one.</p>
 
@@ -21,7 +21,7 @@ $tracker = Ledger_Tracker::instance();
             $browsers[ $row->browser ] = ( $browsers[ $row->browser ] ?? 0 ) + 1;
         }
         ?>
-        <div class="ledger-card">
+        <div class="trellink-card">
             <h2><?php echo esc_html( $link->title ?: $link->slug ); ?> <span class="description">/<?php echo esc_html( $link->slug ); ?></span></h2>
             <p><strong><?php echo esc_html( count( $breakdown ) ); ?></strong> clean clicks in the last 30 days.</p>
             <p>Device split — Desktop: <?php echo esc_html( $devices['desktop'] ); ?>, Mobile: <?php echo esc_html( $devices['mobile'] ); ?></p>

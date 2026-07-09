@@ -1,25 +1,25 @@
-.ledger-wrap .ledger-two-col {
+.trellink-wrap .trellink-two-col {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px;
     margin: 20px 0;
 }
-.ledger-wrap .ledger-card {
+.trellink-wrap .trellink-card {
     background: #fff;
     border: 1px solid #dcdcde;
     border-radius: 6px;
     padding: 16px 20px;
     margin-bottom: 20px;
 }
-.ledger-badge {
+.trellink-badge {
     display: inline-block;
     padding: 2px 8px;
     border-radius: 10px;
     font-size: 12px;
     font-weight: 600;
 }
-.ledger-badge-ok { background: #d5f0dc; color: #1e6b3a; }
-.ledger-badge-broken { background: #f7dcd4; color: #9a3412; }
+.trellink-badge-ok { background: #d5f0dc; color: #1e6b3a; }
+.trellink-badge-broken { background: #f7dcd4; color: #9a3412; }
 @media (max-width: 900px) {
-    .ledger-wrap .ledger-two-col { grid-template-columns: 1fr; }
+    .trellink-wrap .trellink-two-col { grid-template-columns: 1fr; }
 }

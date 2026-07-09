@@ -3,27 +3,27 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$settings = get_option( 'ledger_links_settings', array( 'base_slug' => 'go' ) );
-$links = Ledger_Links_CPT::get_all();
-$tracker = Ledger_Tracker::instance();
+$settings = get_option( 'trellink_settings', array( 'base_slug' => 'go' ) );
+$links = Trellink_CPT::get_all();
+$tracker = Trellink_Tracker::instance();
 ?>
-<div class="wrap ledger-wrap">
-    <h1>Ledger Links</h1>
+<div class="wrap trellink-wrap">
+    <h1>Trellink</h1>
 
-    <?php if ( ! empty( $_GET['ledger_checked'] ) ) :
-        $broken = get_transient( 'ledger_last_check_result' );
+    <?php if ( ! empty( $_GET['trellink_checked'] ) ) :
+        $broken = get_transient( 'trellink_last_check_result' );
         $count = is_array( $broken ) ? count( $broken ) : 0; ?>
         <div class="notice notice-<?php echo $count ? 'warning' : 'success'; ?>">
             <p><?php echo $count ? esc_html( "Check complete: {$count} broken link(s) found." ) : 'Check complete: all links are healthy.'; ?></p>
         </div>
     <?php endif; ?>
 
-    <div class="ledger-two-col">
-        <div class="ledger-card">
+    <div class="trellink-two-col">
+        <div class="trellink-card">
             <h2>Add a link</h2>
             <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-                <?php wp_nonce_field( 'ledger_create_link' ); ?>
-                <input type="hidden" name="action" value="ledger_create_link" />
+                <?php wp_nonce_field( 'trellink_create_link' ); ?>
+                <input type="hidden" name="action" value="trellink_create_link" />
                 <table class="form-table">
                     <tr>
                         <th><label for="slug">Slug</label></th>
@@ -62,12 +62,12 @@ $tracker = Ledger_Tracker::instance();
             </form>
         </div>
 
-        <div class="ledger-card">
+        <div class="trellink-card">
             <h2>Link health</h2>
             <p>The broken-link checker runs automatically twice a day. Run it manually any time.</p>
             <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-                <?php wp_nonce_field( 'ledger_run_check_now' ); ?>
-                <input type="hidden" name="action" value="ledger_run_check_now" />
+                <?php wp_nonce_field( 'trellink_run_check_now' ); ?>
+                <input type="hidden" name="action" value="trellink_run_check_now" />
                 <?php submit_button( 'Run check now', 'secondary' ); ?>
             </form>
         </div>
@@ -91,9 +91,9 @@ $tracker = Ledger_Tracker::instance();
                 <td><?php echo esc_html( $link->target_url ); ?></td>
                 <td>
                     <?php if ( 'broken' === $link->status ) : ?>
-                        <span class="ledger-badge ledger-badge-broken">Broken<?php echo $link->last_check_result ? ' — ' . esc_html( $link->last_check_result ) : ''; ?></span>
+                        <span class="trellink-badge trellink-badge-broken">Broken<?php echo $link->last_check_result ? ' — ' . esc_html( $link->last_check_result ) : ''; ?></span>
                     <?php else : ?>
-                        <span class="ledger-badge ledger-badge-ok">Active</span>
+                        <span class="trellink-badge trellink-badge-ok">Active</span>
                     <?php endif; ?>
                 </td>
                 <td><?php echo esc_html( $clean ); ?></td>
@@ -101,7 +101,7 @@ $tracker = Ledger_Tracker::instance();
                     <span class="description"> (<?php echo esc_html( $raw - $clean ); ?> filtered as bot/self-click)</span>
                 <?php endif; ?></td>
                 <td>
-                    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=ledger_delete_link&id=' . $link->id ), 'ledger_delete_link' ) ); ?>"
+                    <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=trellink_delete_link&id=' . $link->id ), 'trellink_delete_link' ) ); ?>"
                        onclick="return confirm('Delete this link?');">Delete</a>
                 </td>
             </tr>

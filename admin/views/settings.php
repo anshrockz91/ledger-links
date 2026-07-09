@@ -2,22 +2,22 @@
 if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
-$settings = get_option( 'ledger_links_settings', array() );
-$license_result = get_transient( 'ledger_license_result' );
-$is_pro = Ledger_License::is_pro();
+$settings = get_option( 'trellink_settings', array() );
+$license_result = get_transient( 'trellink_license_result' );
+$is_pro = Trellink_License::is_pro();
 ?>
-<div class="wrap ledger-wrap">
+<div class="wrap trellink-wrap">
     <h1>Settings</h1>
 
-    <?php if ( ! empty( $_GET['ledger_saved'] ) ) : ?>
+    <?php if ( ! empty( $_GET['trellink_saved'] ) ) : ?>
         <div class="notice notice-success"><p>Settings saved.</p></div>
     <?php endif; ?>
 
-    <div class="ledger-card">
+    <div class="trellink-card">
         <h2>Link behavior</h2>
         <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-            <?php wp_nonce_field( 'ledger_save_settings' ); ?>
-            <input type="hidden" name="action" value="ledger_save_settings" />
+            <?php wp_nonce_field( 'trellink_save_settings' ); ?>
+            <input type="hidden" name="action" value="trellink_save_settings" />
             <table class="form-table">
                 <tr>
                     <th><label for="base_slug">Link base</label></th>
@@ -37,7 +37,7 @@ $is_pro = Ledger_License::is_pro();
         </form>
     </div>
 
-    <div class="ledger-card">
+    <div class="trellink-card">
         <h2>License</h2>
         <p>Status: <strong><?php echo $is_pro ? 'Pro active' : 'Free'; ?></strong> — Pro unlocks geo-redirects, the autolinker, advanced analytics, and multi-site licensing. Everything else in this plugin stays free permanently.</p>
 
@@ -48,8 +48,8 @@ $is_pro = Ledger_License::is_pro();
         <?php endif; ?>
 
         <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-            <?php wp_nonce_field( 'ledger_activate_license' ); ?>
-            <input type="hidden" name="action" value="ledger_activate_license" />
+            <?php wp_nonce_field( 'trellink_activate_license' ); ?>
+            <input type="hidden" name="action" value="trellink_activate_license" />
             <input type="text" name="license_key" placeholder="License key" class="regular-text" value="<?php echo esc_attr( $settings['license_key'] ?? '' ); ?>" />
             <?php submit_button( 'Activate', 'secondary' ); ?>
         </form>

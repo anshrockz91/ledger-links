@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Data access layer for links. Not an actual WP CPT — a dedicated table,
  * since links are high-volume and don't need post revisions/meta overhead.
  */
-class Ledger_Links_CPT {
+class Trellink_CPT {
 
     private static $instance = null;
 
@@ -20,7 +20,7 @@ class Ledger_Links_CPT {
 
     public static function table() {
         global $wpdb;
-        return $wpdb->prefix . 'ledger_links';
+        return $wpdb->prefix . 'trellink';
     }
 
     public static function get_by_slug( $slug ) {
@@ -30,7 +30,7 @@ class Ledger_Links_CPT {
             $wpdb->prepare( "SELECT * FROM {$table} WHERE slug = %s LIMIT 1", $slug )
         );
         if ( null === $row && '' !== $wpdb->last_error ) {
-            ledger_links_log( '[Ledger Links] DB error in get_by_slug: ' . $wpdb->last_error );
+            trellink_log( '[Trellink] DB error in get_by_slug: ' . $wpdb->last_error );
         }
         return $row;
     }
@@ -52,7 +52,7 @@ class Ledger_Links_CPT {
             $wpdb->prepare( "SELECT * FROM {$table} ORDER BY {$orderby} {$order} LIMIT %d", $limit ) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         );
         if ( null === $rows && '' !== $wpdb->last_error ) {
-            ledger_links_log( '[Ledger Links] DB error in get_all: ' . $wpdb->last_error );
+            trellink_log( '[Trellink] DB error in get_all: ' . $wpdb->last_error );
             return array();
         }
         return $rows;
@@ -76,7 +76,7 @@ class Ledger_Links_CPT {
         ) );
 
         if ( false === $ok ) {
-            ledger_links_log( '[Ledger Links] Failed to insert link "' . $data['slug'] . '": ' . $wpdb->last_error );
+            trellink_log( '[Trellink] Failed to insert link "' . $data['slug'] . '": ' . $wpdb->last_error );
             return false;
         }
         return $wpdb->insert_id;
@@ -96,7 +96,7 @@ class Ledger_Links_CPT {
             array( 'id' => $link_id )
         );
         if ( false === $ok ) {
-            ledger_links_log( '[Ledger Links] Failed to update status for link ' . $link_id . ': ' . $wpdb->last_error );
+            trellink_log( '[Trellink] Failed to update status for link ' . $link_id . ': ' . $wpdb->last_error );
         }
         return $ok;
     }
@@ -105,7 +105,7 @@ class Ledger_Links_CPT {
         global $wpdb;
         $ok = $wpdb->delete( self::table(), array( 'id' => $link_id ) );
         if ( false === $ok ) {
-            ledger_links_log( '[Ledger Links] Failed to delete link ' . $link_id . ': ' . $wpdb->last_error );
+            trellink_log( '[Trellink] Failed to delete link ' . $link_id . ': ' . $wpdb->last_error );
         }
         return $ok;
     }

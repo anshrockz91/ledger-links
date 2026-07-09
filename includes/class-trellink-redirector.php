@@ -6,7 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Handles /go/{slug} -> redirect to target, with device targeting.
  */
-class Ledger_Redirector {
+class Trellink_Redirector {
 
     private static $instance = null;
 
@@ -27,44 +27,44 @@ class Ledger_Redirector {
     }
 
     private function base_slug() {
-        $settings = get_option( 'ledger_links_settings', array() );
+        $settings = get_option( 'trellink_settings', array() );
         $base = isset( $settings['base_slug'] ) ? $settings['base_slug'] : 'go';
         return sanitize_title( $base );
     }
 
     public function register_rewrite() {
         $base = $this->base_slug();
-        add_rewrite_rule( '^' . $base . '/([^/]+)/?$', 'index.php?ledger_link_slug=$matches[1]', 'top' );
+        add_rewrite_rule( '^' . $base . '/([^/]+)/?$', 'index.php?trellink_link_slug=$matches[1]', 'top' );
     }
 
     public function register_query_var( $vars ) {
-        $vars[] = 'ledger_link_slug';
+        $vars[] = 'trellink_link_slug';
         return $vars;
     }
 
     public function maybe_redirect() {
-        $slug = get_query_var( 'ledger_link_slug' );
+        $slug = get_query_var( 'trellink_link_slug' );
         if ( empty( $slug ) ) {
             return;
         }
 
-        $link = Ledger_Links_CPT::get_by_slug( $slug );
+        $link = Trellink_CPT::get_by_slug( $slug );
 
         if ( ! $link ) {
             status_header( 404 );
             nocache_headers();
             wp_die(
-                esc_html__( 'This link could not be found.', 'ledger-links' ),
-                esc_html__( 'Link not found', 'ledger-links' ),
+                esc_html__( 'This link could not be found.', 'trellink' ),
+                esc_html__( 'Link not found', 'trellink' ),
                 array( 'response' => 404 )
             );
         }
 
         // Track the click before redirecting — never let tracking failure block the redirect.
         try {
-            Ledger_Tracker::instance()->record_click( $link );
+            Trellink_Tracker::instance()->record_click( $link );
         } catch ( Throwable $e ) {
-            ledger_links_log( '[Ledger Links] Click tracking failed for link ' . $link->id . ': ' . $e->getMessage() );
+            trellink_log( '[Trellink] Click tracking failed for link ' . $link->id . ': ' . $e->getMessage() );
         }
 
         $target = $link->target_url;
@@ -74,7 +74,7 @@ class Ledger_Redirector {
         }
 
         if ( 'broken' === $link->status ) {
-            ledger_links_log( '[Ledger Links] Warning: redirecting through a link flagged broken by the checker: ' . $slug );
+            trellink_log( '[Trellink] Warning: redirecting through a link flagged broken by the checker: ' . $slug );
         }
 
         nocache_headers();

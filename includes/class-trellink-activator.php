@@ -3,14 +3,14 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-class Ledger_Activator {
+class Trellink_Activator {
 
     public static function activate() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
 
-        $links_table  = $wpdb->prefix . 'ledger_links';
-        $clicks_table = $wpdb->prefix . 'ledger_clicks';
+        $links_table  = $wpdb->prefix . 'trellink';
+        $clicks_table = $wpdb->prefix . 'trellink_clicks';
 
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
@@ -49,8 +49,8 @@ class Ledger_Activator {
         dbDelta( $sql_links );
         dbDelta( $sql_clicks );
 
-        if ( false === get_option( 'ledger_links_settings' ) ) {
-            add_option( 'ledger_links_settings', array(
+        if ( false === get_option( 'trellink_settings' ) ) {
+            add_option( 'trellink_settings', array(
                 'base_slug'            => 'go',
                 'exclude_bots'         => true,
                 'exclude_admin_clicks' => true,

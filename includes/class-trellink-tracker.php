@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * PrettyLinks inflates click counts unless a user manually enables filtering.
  * Here there is nothing to manually enable — it's the default, honest count.
  */
-class Ledger_Tracker {
+class Trellink_Tracker {
 
     private static $instance = null;
 
@@ -28,14 +28,14 @@ class Ledger_Tracker {
 
     public function record_click( $link ) {
         global $wpdb;
-        $table = $wpdb->prefix . 'ledger_clicks';
+        $table = $wpdb->prefix . 'trellink_clicks';
 
         $ua = isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
         $is_bot = $this->looks_like_bot( $ua );
         $is_self = is_user_logged_in() && current_user_can( 'manage_options' );
 
         $ip = $this->get_client_ip();
-        $ip_hash = $ip ? hash( 'sha256', $ip . wp_salt() ) : null;
+        $ip_hash = $ip ? hash( 'sha256', $ip . self::get_ip_hash_secret() ) : null;
 
         $ok = $wpdb->insert( $table, array(
             'link_id'       => (int) $link->id,
@@ -49,7 +49,7 @@ class Ledger_Tracker {
         ) );
 
         if ( false === $ok ) {
-            ledger_links_log( '[Ledger Links] Failed to record click for link ' . $link->id . ': ' . $wpdb->last_error );
+            trellink_log( '[Trellink] Failed to record click for link ' . $link->id . ': ' . $wpdb->last_error );
         }
 
         return $ok;
@@ -61,8 +61,8 @@ class Ledger_Tracker {
      */
     public function get_clean_click_count( $link_id, $days = 30 ) {
         global $wpdb;
-        $table = $wpdb->prefix . 'ledger_clicks';
-        $settings = get_option( 'ledger_links_settings', array() );
+        $table = $wpdb->prefix . 'trellink_clicks';
+        $settings = get_option( 'trellink_settings', array() );
 
         $where = array( 'link_id = %d' );
         $params = array( $link_id );
@@ -87,7 +87,7 @@ class Ledger_Tracker {
 
     public function get_raw_click_count( $link_id, $days = 30 ) {
         global $wpdb;
-        $table = $wpdb->prefix . 'ledger_clicks';
+        $table = $wpdb->prefix . 'trellink_clicks';
         return (int) $wpdb->get_var(
             $wpdb->prepare(
                 "SELECT COUNT(*) FROM {$table} WHERE link_id = %d AND clicked_at >= DATE_SUB(NOW(), INTERVAL %d DAY)",
@@ -99,7 +99,7 @@ class Ledger_Tracker {
 
     public function get_breakdown( $link_id, $days = 30 ) {
         global $wpdb;
-        $table = $wpdb->prefix . 'ledger_clicks';
+        $table = $wpdb->prefix . 'trellink_clicks';
         $rows = $wpdb->get_results( $wpdb->prepare(
             "SELECT device, browser, referrer FROM {$table}
              WHERE link_id = %d AND clicked_at >= DATE_SUB(NOW(), INTERVAL %d DAY)
@@ -132,6 +132,20 @@ class Ledger_Tracker {
         if ( false !== strpos( $ua_lower, 'safari/' ) && false === strpos( $ua_lower, 'chrome' ) ) return 'Safari';
         if ( false !== strpos( $ua_lower, 'firefox/' ) ) return 'Firefox';
         return 'other';
+    }
+
+    /**
+     * A secret dedicated to hashing IPs for click dedup — generated and stored
+     * by this plugin, never borrowed from WordPress's authentication salts
+     * (which are reserved for signing session cookies, not application data).
+     */
+    private static function get_ip_hash_secret() {
+        $secret = get_option( 'trellink_ip_hash_secret' );
+        if ( empty( $secret ) ) {
+            $secret = wp_generate_password( 64, true, true );
+            update_option( 'trellink_ip_hash_secret', $secret );
+        }
+        return $secret;
     }
 
     private function get_client_ip() {
